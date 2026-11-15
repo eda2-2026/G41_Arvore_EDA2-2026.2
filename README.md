@@ -6,6 +6,7 @@
   <img src="https://img.shields.io/badge/Biblioteca-Pygame-2E7D32" alt="Pygame">
   <img src="https://img.shields.io/badge/Estrutura-Arvore_AVL-111827" alt="Árvore AVL">
 </p>
+
 ## 📝 Descrição
  
 O Air Defense é um jogo de defesa aérea desenvolvido em Python com Pygame. O jogador controla uma bateria antiaérea que precisa neutralizar ondas de aeronaves inimigas antes que elas alcancem a base. Todo o controle dos alvos ativos é feito por uma **Árvore AVL implementada manualmente**, sem uso de bibliotecas prontas de árvores.
@@ -139,9 +140,11 @@ refactor: separa logica da arvore da interface do jogo
 <p align="center">
     <img src="assets/Profile.jpg" alt="Foto de Bernardo Watanabe Venzi" width="220">
 </p>
+
 - **Nome:** Bernardo Watanabe Venzi
 - **Matrícula:** 232001120
 - **Modalidade:** dupla
+
 ## 🎓 Contexto Acadêmico
  
 Trabalho da disciplina de **Estruturas de Dados 2**, turma 2026.2, referente ao Módulo 3 (Árvores).
