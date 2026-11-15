@@ -12,12 +12,6 @@ O Air Defense é um jogo de defesa aérea desenvolvido em Python com Pygame. O j
  
 O projeto resolve um problema real de sistemas de defesa e monitoramento: manter dezenas de alvos em movimento organizados por nível de ameaça, permitindo inserir novos alvos, remover os destruídos e consultar o mais perigoso de forma eficiente, mesmo com o número de alvos variando a todo instante.
  
-## 🎬 Apresentação em Vídeo
- 
-Assista à apresentação completa do projeto no YouTube:
- 
-[![Apresentação do Air Defense](https://img.shields.io/badge/▶_Assistir_no_YouTube-red?logo=youtube&logoColor=white&style=for-the-badge)](<LINK_DO_VIDEO>)
- 
 ## 💡 Diferenciais Técnicos
  
 O principal destaque do projeto é a ligação direta entre a mecânica do jogo e as operações da árvore, de modo que cada ação do jogo é uma operação de estrutura de dados:
@@ -66,12 +60,12 @@ Certifique-se de que o Python 3.10 ou superior está instalado e disponível no 
  
 1. Clone o repositório:
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/eda2-2026/G41_Arvore_EDA2-2026.2.git
 ```
  
 2. Acesse a pasta do projeto:
 ```bash
-cd G41_Arvores_EDA2-2026.2
+cd G41_Arvore_EDA2-2026.2
 ```
  
 3. Instale a dependência:
@@ -81,18 +75,17 @@ pip install pygame
  
 4. Execute o jogo:
 ```bash
-python main.py
+python jogo.py
 ```
- 
-> Se a estrutura do projeto for dividida em mais arquivos ou pastas, o ponto de entrada continua sendo o `main.py`.
  
 ## 🎮 Como Jogar
  
 - Mova a mira com o **mouse** e dispare com o **clique esquerdo**;
+- Use o **botão direito** ou a tecla **Espaço** para lançar um míssil;
+- Pressione **P** para pausar, **R** para reiniciar e **Esc** para sair;
 - O alvo mais perigoso (máximo da AVL) fica destacado no radar;
 - Destruir um inimigo o remove da árvore e rebalanceia a estrutura;
 - Se um inimigo alcançar a base, ela perde vida; o jogo termina quando a vida chega a zero.
-> Os controles podem ser ajustados ao longo do desenvolvimento.
  
 ## 🧪 Funcionalidades do Sistema
  
@@ -104,9 +97,22 @@ python main.py
 - Painel com a árvore desenhada e fator de balanceamento por nó;
 - Ondas de dificuldade crescente, pontuação e vida da base;
 - Testes da árvore independentes da interface.
-## 🌐 Prints do Jogo
- 
+## 🖼️ Prints do Jogo
 
+### Tela Inicial
+<p align="center">
+    <img src="assets/lobby.png" alt="Tela inicial do Air Defense" width="600">
+</p>
+
+### Partida em Andamento
+<p align="center">
+    <img src="assets/game.png" alt="Partida do Air Defense com radar e HUD" width="600">
+</p>
+
+### Árvore AVL em Tempo Real
+<p align="center">
+    <img src="assets/arvore.png" alt="Visualização da árvore AVL durante o jogo" width="600">
+</p>
  
 ## 📝 Política de Commits (Conventional Commits)
  
@@ -135,12 +141,6 @@ refactor: separa logica da arvore da interface do jogo
 </p>
 - **Nome:** Bernardo Watanabe Venzi
 - **Matrícula:** 232001120
-- **Modalidade:** dupla
-<p align="center">
-    <img src="assets/Profile2.jpg" alt="Foto de <NOME_DO_PARCEIRO>" width="220">
-</p>
-- **Nome:** <NOME_DO_PARCEIRO>
-- **Matrícula:** <MATRICULA_DO_PARCEIRO>
 - **Modalidade:** dupla
 ## 🎓 Contexto Acadêmico
  
