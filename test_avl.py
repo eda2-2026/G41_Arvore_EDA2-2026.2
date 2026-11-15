@@ -65,7 +65,8 @@ def chaves(a):
     return [n.chave for n in a.em_ordem()]
 
 
-# Arvore usada nos testes de remocao (sem balanceamento por enquanto):
+# Arvore usada nos testes de remocao (ja balanceada, entao nenhuma
+# rotacao acontece ao montar):
 #           (5,1)
 #          /     \
 #      (3,2)     (8,3)
@@ -159,6 +160,160 @@ def teste_minimo_maximo_apos_remocao():
     assert minimo is not None
     assert maximo.chave == (8, 3)
     assert minimo.chave == (3, 2)
+
+
+def verificar(a):
+    """Confere as invariantes da AVL: ordem BST, alturas e balanceamento."""
+    def rec(no, minimo, maximo):
+        if no is None:
+            return 0
+        if minimo is not None:
+            assert no.chave > minimo, "viola a ordem da BST"
+        if maximo is not None:
+            assert no.chave < maximo, "viola a ordem da BST"
+        he = rec(no.esq, minimo, no.chave)
+        hd = rec(no.dir, no.chave, maximo)
+        assert no.altura == 1 + max(he, hd), "altura guardada esta errada"
+        assert abs(he - hd) <= 1, f"no {no.chave} desbalanceado"
+        return no.altura
+
+    rec(a.raiz, None, None)
+    assert len(a.em_ordem()) == len(a)
+
+
+def teste_rotacao_ll():
+    a = montar([(3, 1), (2, 2), (1, 3)])
+    assert a.consumir_eventos() == [("LL", (3, 1))]
+    assert a.raiz is not None
+    assert a.raiz.chave == (2, 2)
+    esquerda = a.raiz.esq
+    direita = a.raiz.dir
+    assert esquerda is not None and direita is not None
+    assert esquerda.chave == (1, 3) and direita.chave == (3, 1)
+    verificar(a)
+
+
+def teste_rotacao_rr():
+    a = montar([(1, 1), (2, 2), (3, 3)])
+    assert a.consumir_eventos() == [("RR", (1, 1))]
+    assert a.raiz is not None
+    assert a.raiz.chave == (2, 2)
+    esquerda = a.raiz.esq
+    direita = a.raiz.dir
+    assert esquerda is not None and direita is not None
+    assert esquerda.chave == (1, 1) and direita.chave == (3, 3)
+    verificar(a)
+
+
+def teste_rotacao_lr():
+    a = montar([(3, 1), (1, 2), (2, 3)])
+    assert a.consumir_eventos() == [("LR", (3, 1))]
+    assert a.raiz is not None
+    assert a.raiz.chave == (2, 3)
+    esquerda = a.raiz.esq
+    direita = a.raiz.dir
+    assert esquerda is not None and direita is not None
+    assert esquerda.chave == (1, 2) and direita.chave == (3, 1)
+    verificar(a)
+
+
+def teste_rotacao_rl():
+    a = montar([(1, 1), (3, 2), (2, 3)])
+    assert a.consumir_eventos() == [("RL", (1, 1))]
+    assert a.raiz is not None
+    assert a.raiz.chave == (2, 3)
+    esquerda = a.raiz.esq
+    direita = a.raiz.dir
+    assert esquerda is not None and direita is not None
+    assert esquerda.chave == (1, 1) and direita.chave == (3, 2)
+    verificar(a)
+
+
+def teste_consumir_eventos_limpa():
+    a = montar([(1, 1), (2, 2), (3, 3)])
+    assert len(a.consumir_eventos()) == 1
+    assert a.consumir_eventos() == []
+
+
+def teste_insercao_sem_rotacao_nao_gera_evento():
+    a = montar([(2, 1), (1, 2), (3, 3)])
+    assert a.consumir_eventos() == []
+
+
+def teste_insercao_crescente_fica_balanceada():
+    a = ArvoreAVL()
+    for i in range(1, 128):         # 127 = 2^7 - 1 chaves, arvore perfeita
+        a.inserir((i, i))
+        verificar(a)
+    assert a.altura() == 7
+    assert a.raiz is not None
+    assert a.raiz.chave == (64, 64)
+
+
+def teste_insercao_decrescente_fica_balanceada():
+    a = ArvoreAVL()
+    for i in range(127, 0, -1):
+        a.inserir((i, i))
+        verificar(a)
+    assert a.altura() == 7
+
+
+def teste_remocao_com_rotacao():
+    a = montar([(2, 1), (1, 2), (3, 3), (4, 4)])
+    a.consumir_eventos()
+    assert a.remover((1, 2))        # (2,1) fica pesada a direita -> RR
+    assert a.consumir_eventos() == [("RR", (2, 1))]
+    assert a.raiz is not None
+    assert a.raiz.chave == (3, 3)
+    assert chaves(a) == [(2, 1), (3, 3), (4, 4)]
+    verificar(a)
+
+
+def teste_remocao_com_rotacao_dupla():
+    a = montar([(3, 1), (1, 2), (5, 3), (4, 4)])
+    a.consumir_eventos()
+    assert a.remover((1, 2))        # (3,1) pesada a direita, filho a esquerda -> RL
+    assert a.consumir_eventos() == [("RL", (3, 1))]
+    assert a.raiz is not None
+    assert a.raiz.chave == (4, 4)
+    verificar(a)
+
+
+def teste_remocao_do_sucessor_rebalanceia():
+    # remover a raiz usa o sucessor da direita; isso pode desbalancear
+    a = montar([(4, 1), (2, 2), (6, 3), (1, 4), (3, 5), (5, 6), (7, 7), (8, 8)])
+    verificar(a)
+    a.remover((4, 1))
+    verificar(a)
+    assert chaves(a) == [(1, 4), (2, 2), (3, 5), (5, 6), (6, 3), (7, 7), (8, 8)]
+
+
+def teste_aleatorio_mantem_invariantes():
+    import math
+    import random
+    rng = random.Random(42)
+    a = ArvoreAVL()
+    esperado = set()
+    for _ in range(1500):
+        c = (rng.randint(0, 40), rng.randint(0, 5))
+        if rng.random() < 0.55:
+            assert a.inserir(c) == (c not in esperado)
+            esperado.add(c)
+        else:
+            assert a.remover(c) == (c in esperado)
+            esperado.discard(c)
+        verificar(a)
+        assert len(a) == len(esperado)
+        assert chaves(a) == sorted(esperado)
+        if esperado:
+            minimo = a.minimo()
+            maximo = a.maximo()
+            assert minimo is not None
+            assert maximo is not None
+            assert minimo.chave == min(esperado)
+            assert maximo.chave == max(esperado)
+            # limite teorico da AVL: h < 1.4405 * log2(n + 2)
+            assert a.altura() < 1.4405 * math.log2(len(esperado) + 2)
 
 
 if __name__ == "__main__":

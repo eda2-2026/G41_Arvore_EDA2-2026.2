@@ -4,8 +4,13 @@ Cada no guarda uma chave (nivel de ameaca, id) e um valor (o inimigo).
 O id entra na chave como desempate, entao duas aeronaves com a mesma
 ameaca continuam tendo chaves distintas.
 
-Estado atual: insercao, remocao, busca, minimo, maximo e percurso em ordem.
-Rotacoes (balanceamento) entram no proximo commit.
+Estado atual: insercao, remocao, busca, minimo, maximo, percurso em ordem
+e balanceamento por rotacoes (LL, RR, LR, RL).
+
+Cada rotacao aplicada e registrada em `eventos` como uma tupla
+(tipo, chave_do_no_desbalanceado), por exemplo ("LR", (5, 1)). A interface
+do jogo usa isso para desenhar o rebalanceamento; `consumir_eventos()`
+devolve a lista e a limpa.
 """
 
 
@@ -31,10 +36,77 @@ def fator_balanceamento(no):
     return altura(no.esq) - altura(no.dir) if no else 0
 
 
+def rotacao_direita(y):
+    """Rotacao simples a direita. Devolve a nova raiz da subarvore.
+
+            y                x
+           / \\              / \\
+          x   C    -->    A   y
+         / \\                  / \\
+        A   B                B   C
+    """
+    x = y.esq
+    y.esq = x.dir
+    x.dir = y
+    atualizar_altura(y)     # y desceu, entao a altura dele vem primeiro
+    atualizar_altura(x)
+    return x
+
+
+def rotacao_esquerda(x):
+    """Rotacao simples a esquerda. Devolve a nova raiz da subarvore.
+
+          x                    y
+         / \\                  / \\
+        A   y      -->      x   C
+           / \\            / \\
+          B   C          A   B
+    """
+    y = x.dir
+    x.dir = y.esq
+    y.esq = x
+    atualizar_altura(x)
+    atualizar_altura(y)
+    return y
+
+
 class ArvoreAVL:
     def __init__(self):
         self.raiz = None
         self.tamanho = 0
+        self.eventos = []       # rotacoes aplicadas (para a interface)
+
+    def consumir_eventos(self):
+        """Devolve os eventos de rotacao acumulados e limpa a lista."""
+        eventos, self.eventos = self.eventos, []
+        return eventos
+
+    # ---------- balanceamento ----------
+    def _balancear(self, no):
+        """Atualiza a altura do no e corrige o desbalanceamento, se houver.
+
+        Devolve a nova raiz da subarvore.
+        """
+        atualizar_altura(no)
+        fb = fator_balanceamento(no)
+
+        if fb > 1:                                  # pesada a esquerda
+            if fator_balanceamento(no.esq) < 0:     # filho pesado a direita
+                self.eventos.append(("LR", no.chave))
+                no.esq = rotacao_esquerda(no.esq)
+            else:
+                self.eventos.append(("LL", no.chave))
+            return rotacao_direita(no)
+
+        if fb < -1:                                 # pesada a direita
+            if fator_balanceamento(no.dir) > 0:     # filho pesado a esquerda
+                self.eventos.append(("RL", no.chave))
+                no.dir = rotacao_direita(no.dir)
+            else:
+                self.eventos.append(("RR", no.chave))
+            return rotacao_esquerda(no)
+
+        return no
 
     # ---------- insercao ----------
     def inserir(self, chave, valor=None):
@@ -55,8 +127,7 @@ class ArvoreAVL:
         else:
             self._inseriu = False   # chave repetida
             return no
-        atualizar_altura(no)
-        return no
+        return self._balancear(no)
 
     # ---------- remocao ----------
     def remover(self, chave):
@@ -91,16 +162,14 @@ class ArvoreAVL:
             no.valor = sucessor.valor
             no.dir = self._remover_sucessor(no.dir)
 
-        atualizar_altura(no)
-        return no
+        return self._balancear(no)
 
     def _remover_sucessor(self, no):
         """Remove o menor no da subarvore e devolve a nova raiz dela."""
         if no.esq is None:
             return no.dir
         no.esq = self._remover_sucessor(no.esq)
-        atualizar_altura(no)
-        return no
+        return self._balancear(no)
 
     # ---------- busca ----------
     def buscar(self, chave):
