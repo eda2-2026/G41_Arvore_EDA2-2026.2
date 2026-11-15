@@ -13,6 +13,12 @@ O Air Defense é um jogo de defesa aérea desenvolvido em Python com Pygame. O j
  
 O projeto resolve um problema real de sistemas de defesa e monitoramento: manter dezenas de alvos em movimento organizados por nível de ameaça, permitindo inserir novos alvos, remover os destruídos e consultar o mais perigoso de forma eficiente, mesmo com o número de alvos variando a todo instante.
  
+## 🎬 Apresentação em Vídeo
+
+Assista à apresentação do projeto no YouTube:
+
+[![Apresentação do Air Defense](https://img.shields.io/badge/▶_Assistir_no_YouTube-red?logo=youtube&logoColor=white&style=for-the-badge)](https://youtu.be/K6OvIkOAZSM)
+
 ## 💡 Diferenciais Técnicos
  
 O principal destaque do projeto é a ligação direta entre a mecânica do jogo e as operações da árvore, de modo que cada ação do jogo é uma operação de estrutura de dados:
