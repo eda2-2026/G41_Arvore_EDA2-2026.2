@@ -81,6 +81,12 @@ class ArvoreAVL:
         eventos, self.eventos = self.eventos, []
         return eventos
 
+    def limpar(self):
+        """Esvazia a arvore."""
+        self.raiz = None
+        self.tamanho = 0
+        self.eventos = []
+
     # ---------- balanceamento ----------
     def _balancear(self, no):
         """Atualiza a altura do no e corrige o desbalanceamento, se houver.

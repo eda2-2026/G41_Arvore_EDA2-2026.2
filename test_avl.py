@@ -316,6 +316,14 @@ def teste_aleatorio_mantem_invariantes():
             assert a.altura() < 1.4405 * math.log2(len(esperado) + 2)
 
 
+def teste_limpar():
+    a = montar([(1, 1), (2, 2), (3, 3)])
+    a.limpar()
+    assert len(a) == 0 and a.raiz is None and a.altura() == 0
+    assert a.consumir_eventos() == []
+    assert a.inserir((1, 1))            # continua utilizavel
+
+
 if __name__ == "__main__":
     testes = [v for k, v in dict(globals()).items() if k.startswith("teste_")]
     for t in testes:
